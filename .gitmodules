@@ -1,0 +1,6 @@
+[submodule "client/third-party/tfhe-rs"]
+	path = client/third-party/tfhe-rs
+	url = https://github.com/zama-ai/tfhe-rs.git
+[submodule "third-party/tfhe-rs"]
+	path = third-party/tfhe-rs
+	url = https://github.com/zama-ai/tfhe-rs

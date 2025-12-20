@@ -1,0 +1,10 @@
+# Concrete may emits a .zip of a circuit
+.zip
+
+# todo: remove me
+__OLD__
+
+# IDE/OS
+*.swp
+*.Identifier
+.vscode
