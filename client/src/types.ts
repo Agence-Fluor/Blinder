@@ -1,22 +1,14 @@
+export interface BubbleItem {
+  id: string;
+  label: string;
+  color: string;
+  children?: BubbleItem[];
+  depth: number;
+}
 
 export enum Gender {
   MALE = 'Homme',
   FEMALE = 'Femme'
-}
-
-export enum Interest {
-  TRAVEL = 'Voyage',
-  MUSIC = 'Musique',
-  FOOD = 'Gastronomie',
-  SPORT = 'Sport',
-  TECH = 'Tech',
-  ART = 'Art',
-  NATURE = 'Nature',
-  MOVIES = 'Cinéma',
-  READING = 'Lecture',
-  GAMING = 'Jeux Vidéo',
-  FASHION = 'Mode',
-  PHOTOGRAPHY = 'Photographie'
 }
 
 export interface UserProfile {
@@ -24,7 +16,7 @@ export interface UserProfile {
   gender: Gender;
   country: string; // Fixed to "FR"
   department: string;
-  interests: Interest[];
+  interests: string[];
 }
 
 // Users can have multiple search profiles
@@ -38,7 +30,7 @@ export interface SearchProfile {
   gender: Gender | 'ANY';
   country: string;
   departments: string[];
-  interests: Interest[]; 
+  interests: string[]; 
 }
 
 export interface MatchProfile {
@@ -52,7 +44,7 @@ export interface MatchProfile {
   age: number;
   gender: Gender;
   department: string;
-  interests: Interest[];
+  interests: string[];
 }
 
 export interface Message {
@@ -67,15 +59,6 @@ export interface ChatSession {
   match: MatchProfile;
   messages: Message[];
   unread: boolean;
-}
-
-
-export interface BubbleItem {
-  id: string;
-  label: string;
-  color: string;
-  children?: BubbleItem[];
-  depth: number;
 }
 
 export interface SelectionState {

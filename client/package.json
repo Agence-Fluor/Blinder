@@ -13,6 +13,7 @@
 	"dependencies": {
 		"avataaars": "^2.0.0",
 		"comlink": "^4.4.2",
+		"qrcode": "^1.5.4",
 		"sv-router": "latest",
 		"svelte-hero-icons": "^5.2.0",
 		"wasm-feature-detect": "^1.8.0"

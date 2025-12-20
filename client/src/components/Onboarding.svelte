@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Slider from "./Slider.svelte"  
   import { 
     type UserProfile, 
     Gender,
@@ -13,6 +12,8 @@
   import BubbleSelector from "./BubbleSelector.svelte";
   import BackButton from "./BackButton.svelte";
   import { onMount } from "svelte";
+    import { userProfile } from '../stores/app';
+    import { BUBBLE_DATA } from '../bubble_data';
 
   //init_keys()
 
@@ -20,6 +21,7 @@
     profile = $bindable<UserProfile>(), 
     onComplete 
   } = $props();
+
 
   let step = $state(0);
   let avatarUrl = $state("");
@@ -165,7 +167,10 @@
         <!-- Step 4: Interests -->
         {:else if step === 3}
           <BubbleSelector 
-            onComplete={onComplete}
+            onComplete={(ids) => {
+              $userProfile.interests = ids
+              onComplete()
+            }}
             onBack={prevStep}
           >
             <div slot="progress" class="fixed top-0 left-0 right-0 z-[110] p-6 pt-4 backdrop-blur-2xl bg-background/80 border-b border-white/10">

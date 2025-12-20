@@ -72,9 +72,15 @@
     <img src={$activeSession.match.avatarUrl} alt="avatar" class="w-10 h-10 rounded-full border border-primary" />
     <div class="ml-3">
         <div class="font-semibold text-white">{$activeSession.match.searchProfileName} {$activeSession.match.funWord}</div>
-        <div class="text-xs text-gray-400">{$activeSession.match.age} ans • {$activeSession.match.profession || 'Mystère'}</div>
+        <div class="text-xs text-gray-400">{$activeSession.match.age} ans ({$activeSession.match.department})</div>
     </div>
-    </header>
+
+    <button class="ml-auto text-gray-400" on:click={() => {
+      if (confirm("Are you sure?")) {
+        alert("Match deleted");
+      }
+    }}>Supprimer ce match</button>
+  </header>
 
     <div bind:this={chatContainer} class="flex-1 p-4 overflow-y-auto no-scrollbar bg-black/10 space-y-3">
     {#each $activeSession.messages as msg (msg.id)}
@@ -102,7 +108,8 @@
 </div>
 {:else}
       <div class="pt-10 pb-24 px-4 min-h-screen">
-            <h2 class="text-lg ml-4 font-semibold text-white">Messages</h2>
+            <h2 class="text-lg ml-4 font-semibold text-white inline-block">Messages</h2>
+            <a href="#" class="mr-4 float-right text-primary text-sm"> Profile chiffré pour 200/500 personnes. 12 matches. 38 incompatibles. 150 en attente.</a>
 <!-- Conversations List -->
 <main class="p-4 flex-1 space-y-4">
     {#if $sessions.length === 0}

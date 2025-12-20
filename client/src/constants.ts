@@ -1,5 +1,6 @@
 
-import { Interest, Gender, UserProfile, SearchProfile } from './types';
+import { BubbleItem, Gender, UserProfile, SearchProfile } from './types';
+import { BUBBLE_DATA } from './bubble_data'
 
 export const DEPARTMENTS = [
   "75 - Paris",
@@ -55,7 +56,7 @@ export const DEFAULT_SEARCH_PROFILES: SearchProfile[] = [
     gender: Gender.MALE,
     country: "FR",
     departments: ["75 - Paris"],
-    interests: [Interest.TRAVEL],
+    interests: [],
   },
   {
     id: 'sp_2',
@@ -65,6 +66,6 @@ export const DEFAULT_SEARCH_PROFILES: SearchProfile[] = [
     gender: 'ANY',
     country: "FR",
     departments: ["75 - Paris"],
-    interests: [Interest.MUSIC, Interest.ART],
+    interests: [],
   }
 ];

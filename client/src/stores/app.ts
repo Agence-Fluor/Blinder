@@ -11,8 +11,9 @@ import { generateMatchesForProfile, generateChatResponse, getWelcomeMessage } fr
 import { generateAvatarUrl } from '../avatar';
 
 // --- state stores ---
-export const firstVisit = writable(true); // persist as you wish (localStorage)
-export const showOnboarding = writable(true); // mirrored to firstVisit logic
+
+export const firstVisit = writable(true);       // persist as you wish (todo: localStorage)
+export const showOnboarding = writable(true);   // mirrored to firstVisit logic
 
 export const userProfile = writable<UserProfile>({ ...DEFAULT_USER_PROFILE });
 export const searchProfiles = writable<SearchProfile[]>(JSON.parse(JSON.stringify(DEFAULT_SEARCH_PROFILES)));
@@ -27,7 +28,7 @@ export const activeSession = derived([sessions, activeChatId], ([$sessions, $act
 );
 
 export const userAvatar = derived(userProfile, $u =>
-  generateAvatarUrl($u.gender, $u.skinTone, $u.hairColor, '')
+  generateAvatarUrl($u.gender, 'Light', 'Brown', '')
 );
 
 // --- actions ---
@@ -102,12 +103,6 @@ export function createSearchProfile() {
     country: 'FR',
     departments: [get(userProfile).department],
     interests: [],
-    weights: {
-      age:50, gender:50, location:50, interests:50,
-      school:50, fieldOfStudy:50, company:50, profession:50,
-      height:50, bodyType:50, religion:50,
-      hairColor:30, skinTone:30, eyeColor:20
-    }
   };
   searchProfiles.update(s => [...s, newProfile]);
   editingSearchId.set(newId);

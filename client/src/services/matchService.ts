@@ -1,6 +1,7 @@
-import { type UserProfile, type SearchProfile, type MatchProfile, Gender, Interest } from "../types";
+import { type UserProfile, type SearchProfile, type MatchProfile, Gender } from "../types";
 import { FUN_WORDS, DEPARTMENTS, SEARCH_PROFILE_NAMES } from "../constants";
 import { generateAvatarUrl } from "../avatar"
+import { BUBBLE_DATA } from "../bubble_data"
 
 // --- HELPERS ---
 const getRandomItem = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
@@ -28,7 +29,7 @@ export const MOCK_USERS: MatchProfile[] = Array.from({ length: 50 }).map((_, i) 
     age,
     gender,
     department: getRandomItem(DEPARTMENTS),
-    interests: [getRandomItem(Object.values(Interest)), getRandomItem(Object.values(Interest))],
+    interests: [getRandomItem(BUBBLE_DATA).id],
     
   };
 });

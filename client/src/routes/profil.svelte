@@ -6,7 +6,6 @@
     type ChatSession, 
     type MatchProfile, 
     type Message, 
-    type Interest,
     Gender,
   } from '../types';
   import { 
@@ -22,8 +21,17 @@
   import BubbleSelector from '../components/BubbleSelector.svelte';
   import BubbleTags from '../components/BubbleTags.svelte';
 
+  import { userProfile } from "../stores/app"
+    import { BUBBLE_DATA } from '../bubble_data';
+
+  /*
+  let _userProfile =  $state.from(userProfile);
+
+  $effect(() => {
+    userProfile.set(_userProfile)
+  })
+*/
   // --- STATE ---
-  let userProfile: UserProfile = $state({ ...DEFAULT_USER_PROFILE });
   let searchProfiles: SearchProfile[] = $state(JSON.parse(JSON.stringify(DEFAULT_SEARCH_PROFILES)));
   let sessions: ChatSession[] = $state([]);
   let activeChatId: string | null = $state(null);
@@ -32,12 +40,10 @@
   let editingSearchId: string | null = $state(null);
   let isEditingUser = $state(false);
   let isEditingInterests = $state(false);
-  let selectedBubbleIds = $state<string[]>([]);
 
   function handleInterestsComplete(ids: string[]) {
-    selectedBubbleIds = ids;
     isEditingInterests = false;
-    // TODO: Convert bubble IDs to Interest enum if needed
+    $userProfile.interests = ids
   }
 
   // Derived / reactive
@@ -50,89 +56,13 @@
 
   $effect(() => {
 	userAvatar = generateAvatarUrl(
-      userProfile.gender,
+      $userProfile.gender,
       'Light',
       'Brown',
 	  ''
 	);
   });
 
-
-  // --- METHODS ---
-  const refreshMatches = async () => {
-    
-    // Create new array to avoid mutation issues (though Svelte handles mutation fine, logic preserved)
-    const newSessions: ChatSession[] = [...sessions];
-    
-    // Simulate async loading nicely
-    for (const sp of searchProfiles) {
-      // Always find matches for demo purposes
-      if (true) {
-        const matches = await generateMatchesForProfile(userProfile, sp);
-        
-        matches.forEach(match => {
-          if (!newSessions.find(s => s.matchId === match.id)) {
-            newSessions.push({
-              matchId: match.id,
-              match: match,
-              messages: [
-                {
-                  id: 'sys_1',
-                  senderId: match.id,
-                  text: getWelcomeMessage(match),
-                  timestamp: Date.now()
-                }
-              ],
-              unread: true
-            });
-          }
-        });
-      }
-    }
-
-    newSessions.sort((a, b) => b.messages[b.messages.length - 1].timestamp - a.messages[a.messages.length - 1].timestamp);
-    sessions = newSessions;
-  };
-
-  const handleSendMessage = async (text: string) => {
-    if (!activeChatId || !text.trim()) return;
-
-    const sessionIndex = sessions.findIndex(s => s.matchId === activeChatId);
-    if (sessionIndex === -1) return;
-
-    const session = sessions[sessionIndex];
-    
-    // User message
-    const newUserMsg: Message = {
-      id: Date.now().toString(),
-      senderId: 'user',
-      text: text,
-      timestamp: Date.now()
-    };
-
-    // Update sessions (Svelte reactivity requires assignment)
-    sessions[sessionIndex].messages = [...sessions[sessionIndex].messages, newUserMsg];
-    
-    // Trigger reactivity for active chat view
-    sessions = [...sessions]; 
-
-    // AI Reply
-    const responseText = await generateChatResponse(
-      session.match, 
-      text, 
-      session.messages.map(m => ({ role: m.senderId === 'user' ? 'user' : 'model', text: m.text }))
-    );
-
-    const newAiMsg: Message = {
-      id: (Date.now() + 1).toString(),
-      senderId: session.matchId,
-      text: responseText,
-      timestamp: Date.now()
-    };
-
-    sessions[sessionIndex].messages = [...sessions[sessionIndex].messages, newAiMsg];
-    sessions = [...sessions];
-  };
 
   const handleCreateSearchProfile = () => {
     const newId = `sp_${Date.now()}`;
@@ -143,7 +73,7 @@
       maxAge: 99,
       gender: 'ANY',
       country: 'FR',
-      departments: [userProfile.department],
+      departments: [$userProfile.department],
       interests: []
     };
     searchProfiles = [...searchProfiles, newProfile];
@@ -155,16 +85,21 @@
     editingSearchId = null;
   };
 
-  const toggleInterest = (list: Interest[], interest: Interest): Interest[] => {
-    if (list.includes(interest)) {
-      return list.filter(i => i !== interest);
-    } else {
-      return [...list, interest];
-    }
-  };
+  import { getContext } from "svelte";
+  import Popup from '../components/Popup.svelte';
+  import QrContent from '../components/QrContent.svelte';
 
-  // --- ICONS (Inline for simplicity) ---
+  let showQR = $state(false);
+// --- ICONS (Inline for simplicity) ---
 </script>
+
+<Popup bind:open={showQR}>
+   
+  
+      <div style="margin-top:1rem; text-align:right">
+        <button onclick={close}>Close</button>
+      </div>
+  </Popup>
 
 <div class="pt-10 pb-24 px-4 min-h-screen">
     <!-- PROFILE TAB -->
@@ -173,10 +108,17 @@
         <!-- User Profile Card -->
         <section>
             <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-white">Mon Profil Anonyme</h2>
+            <h2 class="text-lg font-semibold text-white">Mon Profil Anonyme 
+                
+                <small> &nbsp;&nbsp;
+                
+                        <a href="#" class="text-primary text-sm" onclick={() => showQR = true}><i class="fa fa-share"></i> Partager</a>
+ 
+                </small>
+            </h2>
             <button 
                 onclick={() => isEditingUser = !isEditingUser}
-                class="mr-20 text-primary text-sm flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full"
+                class="mr-42 text-primary text-sm flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full"
             >
                 <i class="fa-solid fa-download"></i>
                 Exporter les clés
@@ -210,11 +152,11 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                     <label class="text-xs text-gray-500 uppercase font-bold">Age</label>
-                    <input type="number" bind:value={userProfile.age} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1" />
+                    <input type="number" bind:value={$userProfile.age} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1" />
                     </div>
                     <div>
                     <label class="text-xs text-gray-500 uppercase font-bold">Département</label>
-                    <select bind:value={userProfile.department} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
+                    <select bind:value={$userProfile.department} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
                         {#each DEPARTMENTS as d}<option value={d}>{d}</option>{/each}
                     </select>
                     </div>
@@ -225,8 +167,8 @@
                     <div class="flex gap-2 mt-1">
                     {#each GENDER_OPTIONS as g}
                         <button 
-                        onclick={() => userProfile.gender = g}
-                        class={`px-3 py-1 rounded-full text-xs ${userProfile.gender === g ? 'bg-primary text-white' : 'bg-background text-gray-400'}`}
+                        onclick={() => $userProfile.gender = g}
+                        class={`px-3 py-1 rounded-full text-xs ${$userProfile.gender === g ? 'bg-primary text-white' : 'bg-background text-gray-400'}`}
                         >{g}</button>
                     {/each}
                     </div>
@@ -235,19 +177,10 @@
                 <!-- Interests -->
                 <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Ma vie en 20 mots</h4>
                 <div class="space-y-3">
-                    {#if selectedBubbleIds.length > 0}
-                        <BubbleTags selectedIds={selectedBubbleIds} />
-                    {:else}
-                        <div class="flex flex-wrap justify-center gap-2">
-                            {#each userProfile.interests as i}
-                            <span class="text-xs font-bold px-3 py-1 bg-white/20 rounded-full text-white">{i}</span>
-                            {/each}
-                        </div>
-                    {/if}
+                    <BubbleTags selectedIds={$userProfile.interests} />
                     <div class="flex justify-center">
                         <button
                             onclick={() => {
-                                selectedBubbleIds = [...selectedBubbleIds];
                                 isEditingInterests = true;
                             }}
                             class="px-4 py-2 rounded-full text-sm border border-primary text-primary bg-primary/10 hover:bg-primary/20 transition-colors"
@@ -260,21 +193,13 @@
             {:else}
                 <!-- View Mode -->
                 <div class="text-center space-y-2">
-                <h3 class="text-2xl font-bold text-white">{userProfile.age} ans</h3>
+                <h3 class="text-2xl font-bold text-white">{$userProfile.age} ans</h3>
                 <div class="text-sm text-gray-400">
-                    {userProfile.department}, {userProfile.gender}
+                    {$userProfile.department}, {$userProfile.gender}
                 </div>
                 
                 <div class="mt-4">
-                    {#if selectedBubbleIds.length > 0}
-                        <BubbleTags selectedIds={selectedBubbleIds} />
-                    {:else}
-                        <div class="flex flex-wrap justify-center gap-2">
-                            {#each userProfile.interests as i}
-                            <span class="text-xs font-bold px-3 py-1 bg-white/20 rounded-full text-white">{i}</span>
-                            {/each}
-                        </div>
-                    {/if}
+                    <BubbleTags selectedIds={$userProfile.interests} />
                 </div>
                 </div>
             {/if}
@@ -284,7 +209,7 @@
         <!-- Bubble Selector Modal -->
         {#if isEditingInterests}
             <BubbleSelector 
-                initialSelectedIds={selectedBubbleIds}
+                initialSelectedIds={$userProfile.interests}
                 onComplete={handleInterestsComplete}
                 onBack={() => isEditingInterests = false}
             />
