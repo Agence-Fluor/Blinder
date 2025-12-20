@@ -3,25 +3,13 @@
   import { 
     type UserProfile, 
     Gender,
-    Religion,
-    BodyType,
-    HairColor,
-    SkinTone,
-    EyeColor
   } from '../types';
   import { 
     DEPARTMENTS, 
-    INTERESTS_LIST, 
     GENDER_OPTIONS, 
-    RELIGION_OPTIONS,
-    BODY_TYPE_OPTIONS,
-    HAIR_COLOR_OPTIONS,
-    SKIN_TONE_OPTIONS,
-    EYE_COLOR_OPTIONS
   } from '../constants';
   import { generateAvatarUrl } from '../avatar';
   import { init_keys } from '../services/keyServices' 
-  import { devMode } from "../stores/app";
   import BubbleSelector from "./BubbleSelector.svelte";
   import BackButton from "./BackButton.svelte";
   import { onMount } from "svelte";
@@ -39,37 +27,21 @@
   $effect(() => {
     avatarUrl = generateAvatarUrl(
       profile.gender, 
-      profile.skinTone, 
-      profile.hairColor, 
+      'Light', 
+      'Brown', 
       '',
     );
   });
 
   function nextStep() {
     step++;
-
-    if (!$devMode && step >= 3) {
-      step = 5;
-    }
-
   }
 
   function prevStep() {
     step--;
-    if (!$devMode && step >= 3) {
-      step = 2;
-    }
   }
 
-  let stepsCount = $state(3)  
-  $effect(() => 
-    {
-      if ($devMode)
-        stepsCount = 5;
-      else 
-        stepsCount = 3;
-    }
-  )
+  let stepsCount = 3;///$state(3);
 
 
 
@@ -130,7 +102,7 @@
       <!-- Progress Bar (Fixed) -->
       <div class="fixed top-0 left-0 right-0 z-[110] p-6 pt-4 backdrop-blur-2xl bg-background/80 border-b border-white/10">
         <div class="w-full h-1 bg-gray-800 rounded-full">
-          <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {Math.min((step / stepsCount) * 100, 100)}%"></div>
+          <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {(step / stepsCount) * 100}%"></div>
         </div>
       </div>
 
@@ -190,105 +162,29 @@
               </div>
             </div>
           </div>
-
-        <!-- Step 2: Physical -->
-        {:else if step === 3}
-          <div class="flex flex-col items-center">
-            <div class="mb-6">
-              <img src={avatarUrl} class="w-24 h-24 rounded-full border-4 border-primary bg-surface2" alt="Preview" />
-            </div>
-            <h2 class={titleClass}>Votre Apparence</h2>
-            <p class={subtitleClass}>Définissez votre avatar. Il sera votre unique image.</p>
-
-            <div class="w-full grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-gray-500 text-xs font-bold uppercase mb-2">Cheveux</label>
-                <select bind:value={profile.hairColor} class="w-full bg-surface p-3 rounded-xl text-white border border-gray-700 outline-none text-sm">
-                  {#each HAIR_COLOR_OPTIONS as c}<option value={c}>{c}</option>{/each}
-                </select>
-              </div>
-              <div>
-                <label class="block text-gray-500 text-xs font-bold uppercase mb-2">Peau</label>
-                <select bind:value={profile.skinTone} class="w-full bg-surface p-3 rounded-xl text-white border border-gray-700 outline-none text-sm">
-                  {#each SKIN_TONE_OPTIONS as c}<option value={c}>{c}</option>{/each}
-                </select>
-              </div>
-              <div>
-                <label class="block text-gray-500 text-xs font-bold uppercase mb-2">Yeux</label>
-                <select bind:value={profile.eyeColor} class="w-full bg-surface p-3 rounded-xl text-white border border-gray-700 outline-none text-sm">
-                  {#each EYE_COLOR_OPTIONS as c}<option value={c}>{c}</option>{/each}
-                </select>
-              </div>
-              <div>
-                <label class="block text-gray-500 text-xs font-bold uppercase mb-2">Corpulence</label>
-                <select bind:value={profile.bodyType} class="w-full bg-surface p-3 rounded-xl text-white border border-gray-700 outline-none text-sm">
-                  {#each BODY_TYPE_OPTIONS as c}<option value={c}>{c}</option>{/each}
-                </select>
-              </div>
-
-              <div class="col-span-2">
-                <Slider bind:value={profile.height} min={100} max={250} label="Taille" unit=" cm" />
-              </div>
-            </div>
-          </div>
-
-        <!-- Step 3: Life -->
-        {:else if step === 4}
-          <div class="flex flex-col items-center">
-            <div class="mb-6">
-              <img src={avatarUrl} class="w-24 h-24 rounded-full border-4 border-primary bg-surface2" alt="Preview" />
-            </div>
-            <h2 class={titleClass}>Votre Vie</h2>
-            <p class={subtitleClass}>Ce qui vous définit au quotidien.</p>
-
-            <div class="w-full space-y-4">
-              <div>
-                <label class="block text-gray-500 text-xs font-bold uppercase mb-2">Religion / Croyance</label>
-                <select bind:value={profile.religion} class="w-full bg-surface p-4 rounded-xl text-white text-lg border border-gray-700 focus:border-primary outline-none">
-                  {#each RELIGION_OPTIONS as r}<option value={r}>{r}</option>{/each}
-                </select>
-              </div>
-              <div>
-                <label class="block text-gray-500 text-xs font-bold uppercase mb-2">Profession</label>
-                <input 
-                  type="text" 
-                  placeholder="Ex: Architecte"
-                  bind:value={profile.profession}
-                  class="w-full bg-surface p-4 rounded-xl text-white text-lg border border-gray-700 focus:border-primary outline-none"
-                />
-              </div>
-            </div>
-          </div>
-
         <!-- Step 4: Interests -->
-        {:else if step === 5}
+        {:else if step === 3}
           <BubbleSelector 
             onComplete={onComplete}
             onBack={prevStep}
           >
             <div slot="progress" class="fixed top-0 left-0 right-0 z-[110] p-6 pt-4 backdrop-blur-2xl bg-background/80 border-b border-white/10">
               <div class="w-full h-1 bg-gray-800 rounded-full">
-                <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {Math.min((step / stepsCount) * 100, 100)}%"></div>
+                <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {(step / stepsCount) * 100}%"></div>
               </div>
             </div>
           </BubbleSelector>
         {/if}
       </div>
 
-      <!-- Navigation Buttons -->
       <div class="mt-6 flex gap-4">
-        <!--button onclick={prevStep} class="flex-1 py-4 rounded-xl font-bold text-gray-400 bg-surface hover:bg-surface2 transition-colors">
-          Retour
-        </button-->
-        {#if step !== 5}
+       
+        {#if step !== 3}
           <button onclick={nextStep} class="flex-1 py-4 rounded-xl font-bold text-white bg-primary shadow-lg active:scale-95 transition-transform">
             Suivant
           </button>
-       {:else}
-          <!--button onclick={nextStep} class="flex-1 py-4 rounded-xl font-bold text-white bg-primary shadow-lg active:scale-95 transition-transform">
-            Suivant
-          </button-->
         {/if}
+        
       </div>
     </div>
   {/if}

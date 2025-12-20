@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Slider from '../components/Slider.svelte';
   import { 
     type UserProfile, 
     type SearchProfile, 
@@ -9,39 +8,19 @@
     type Message, 
     type Interest,
     Gender,
-    Religion,
-    BodyType,
-    HairColor,
-    SkinTone,
-    EyeColor
   } from '../types';
   import { 
     DEPARTMENTS, 
-    INTERESTS_LIST, 
-    GENDER_OPTIONS, 
-    RELIGION_OPTIONS,
-    BODY_TYPE_OPTIONS,
-    HAIR_COLOR_OPTIONS,
-    SKIN_TONE_OPTIONS,
-    EYE_COLOR_OPTIONS,
+    GENDER_OPTIONS,
     DEFAULT_USER_PROFILE, 
     DEFAULT_SEARCH_PROFILES 
   } from '../constants';
   import { generateMatchesForProfile, generateChatResponse, getWelcomeMessage } from '../services/matchService';
   import { generateAvatarUrl } from "../avatar"
   
-
-  import { devMode } from "../stores/app"
   import RangeSlider from '../components/RangeSlider.svelte';
   import BubbleSelector from '../components/BubbleSelector.svelte';
   import BubbleTags from '../components/BubbleTags.svelte';
-
-
-  let _devMode = $state( $devMode );
-
-  $effect(() => {
-    devMode.set(_devMode);
-  });
 
   // --- STATE ---
   let userProfile: UserProfile = $state({ ...DEFAULT_USER_PROFILE });
@@ -72,8 +51,8 @@
   $effect(() => {
 	userAvatar = generateAvatarUrl(
       userProfile.gender,
-      userProfile.skinTone,
-      userProfile.hairColor,
+      'Light',
+      'Brown',
 	  ''
 	);
   });
@@ -165,13 +144,7 @@
       gender: 'ANY',
       country: 'FR',
       departments: [userProfile.department],
-      interests: [],
-      weights: { 
-        age: 50, gender: 50, location: 50, interests: 50, 
-        school: 50, fieldOfStudy: 50, company: 50, profession: 50,
-        height: 50, bodyType: 50, religion: 50, 
-        hairColor: 30, skinTone: 30, eyeColor: 20
-      }
+      interests: []
     };
     searchProfiles = [...searchProfiles, newProfile];
     editingSearchId = newId;
@@ -232,14 +205,6 @@
             {#if isEditingUser}
                 <div class="space-y-4 animate-in fade-in duration-300">
 
-                <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Général</h4>
-                <div class="grid grid-cols-2 gap-4" style="max-width: 300px">
-                    <label class="text-xs text-gray-500 uppercase font-bold">Dev mode</label>
-                    <input type="checkbox" bind:checked={_devMode} />
-                </div>
-                
-
-
                 <!-- General -->
                 <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Général</h4>
                 <div class="grid grid-cols-2 gap-4">
@@ -266,60 +231,6 @@
                     {/each}
                     </div>
                 </div>
-
-                {#if $devMode}
-
-                <!-- Physical -->
-                <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Physique</h4>
-                <div class="col-span-2">
-                    <Slider bind:value={userProfile.height} min={100} max={250} label="Taille" unit=" cm" />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                    <label class="text-xs text-gray-500 uppercase font-bold">Corpulence</label>
-                    <select bind:value={userProfile.bodyType} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
-                        {#each BODY_TYPE_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                    </select>
-                    </div>
-                    <div>
-                    <label class="text-xs text-gray-500 uppercase font-bold">Cheveux</label>
-                    <select bind:value={userProfile.hairColor} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
-                        {#each HAIR_COLOR_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                    </select>
-                    </div>
-                    <div>
-                    <label class="text-xs text-gray-500 uppercase font-bold">Peau</label>
-                    <select bind:value={userProfile.skinTone} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
-                        {#each SKIN_TONE_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                    </select>
-                    </div>
-                    <div>
-                    <label class="text-xs text-gray-500 uppercase font-bold">Yeux</label>
-                    <select bind:value={userProfile.eyeColor} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
-                        {#each EYE_COLOR_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                    </select>
-                    </div>
-                </div>
-
-                <!-- Beliefs -->
-                <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Croyances & Vie</h4>
-                <div>
-                    <label class="text-xs text-gray-500 uppercase font-bold">Religion</label>
-                    <select bind:value={userProfile.religion} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
-                    {#each RELIGION_OPTIONS as r}<option value={r}>{r}</option>{/each}
-                    </select>
-                </div>
-
-                <!-- Pro -->
-                <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Parcours</h4>
-                <div class="space-y-3">
-                    <input type="text" placeholder="Profession" bind:value={userProfile.profession} class="w-full bg-background p-2 rounded text-white border border-gray-700 text-sm" />
-                    <input type="text" placeholder="École" bind:value={userProfile.school} class="w-full bg-background p-2 rounded text-white border border-gray-700 text-sm" />
-                    <input type="text" placeholder="Domaine d'étude" bind:value={userProfile.fieldOfStudy} class="w-full bg-background p-2 rounded text-white border border-gray-700 text-sm" />
-                    <input type="text" placeholder="Entreprise" bind:value={userProfile.company} class="w-full bg-background p-2 rounded text-white border border-gray-700 text-sm" />
-                </div>
-
-                {/if}
 
                 <!-- Interests -->
                 <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Ma vie en 20 mots</h4>
@@ -350,26 +261,9 @@
                 <!-- View Mode -->
                 <div class="text-center space-y-2">
                 <h3 class="text-2xl font-bold text-white">{userProfile.age} ans</h3>
-                <div class="text-primary font-medium">{userProfile.profession || 'Profession non renseignée'}</div>
                 <div class="text-sm text-gray-400">
                     {userProfile.department}, {userProfile.gender}
                 </div>
-
-                {#if $devMode}
-
-                <div class="text-xs text-gray-500 flex justify-center flex-wrap gap-2 px-4">
-                    <span>{userProfile.height} cm</span> • 
-                    <span>{userProfile.bodyType}</span> • 
-                    <span>{userProfile.religion}</span>
-                </div>
-                <div class="text-xs text-gray-500">
-                    {userProfile.hairColor} • {userProfile.skinTone} • {userProfile.eyeColor}
-                </div>
-                {#if userProfile.school}
-                    <div class="text-xs text-gray-500">Études : {userProfile.school} ({userProfile.fieldOfStudy})</div>
-                {/if}
-
-                {/if}
                 
                 <div class="mt-4">
                     {#if selectedBubbleIds.length > 0}
@@ -453,105 +347,17 @@
                         <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Localisation</label>
                         <div class="text-sm text-gray-400 italic mb-2">Lié au(x) département(s)</div>
                         </div>
-
-                        {#if $devMode}
-
-                        <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Physique</h4>
-                        
-                        <!-- Height -->
-                        <div>
-                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Taille préférée (cm)</label>
-                        <input type="number" bind:value={sp.height} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700" placeholder="Ex: 175" />
-                        </div>
-
-                        <!-- BodyType -->
-                        <div>
-                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Corpulence</label>
-                        <select bind:value={sp.bodyType} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700">
-                            <option value="">Peu importe</option>
-                            {#each BODY_TYPE_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                        </select>
-                        </div>
-
-                        <!-- Hair -->
-                        <div>
-                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Cheveux</label>
-                        <select bind:value={sp.hairColor} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700">
-                            <option value="">Peu importe</option>
-                            {#each HAIR_COLOR_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                        </select>
-                        </div>
-
-                        <!-- Skin -->
-                        <div>
-                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Peau</label>
-                        <select bind:value={sp.skinTone} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700">
-                            <option value="">Peu importe</option>
-                            {#each SKIN_TONE_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                        </select>
-                        </div>
-
-                        <!-- Eyes -->
-                        <div>
-                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Yeux</label>
-                        <select bind:value={sp.eyeColor} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700">
-                            <option value="">Peu importe</option>
-                            {#each EYE_COLOR_OPTIONS as b}<option value={b}>{b}</option>{/each}
-                        </select>
-                        </div>
-
-                        <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Croyances & Vie</h4>
-                        <!-- Religion -->
-                        <div>
-                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Religion</label>
-                        <select bind:value={sp.religion} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700">
-                            <option value="">Peu importe</option>
-                            {#each RELIGION_OPTIONS as r}<option value={r}>{r}</option>{/each}
-                        </select>
-                        </div>
-
-                        <h4 class="text-primary font-bold text-xs uppercase tracking-wider mt-4 mb-2 border-b border-white/10 pb-1">Parcours</h4>
-                        <!-- Profession -->
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Profession</label>
-                            <input type="text" bind:value={sp.profession} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700" placeholder="Ex: Architecte, Dev..." />
-                        </div>
-                        <!-- School -->
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">École</label>
-                            <input type="text" bind:value={sp.school} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700" placeholder="Ex: HEC, 42..." />
-                        </div>
-                        <!-- Field -->
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Domaine d'étude</label>
-                            <input type="text" bind:value={sp.fieldOfStudy} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700" placeholder="Ex: Droit, Arts..." />
-                        </div>
-                        <!-- Company -->
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Entreprise</label>
-                            <input type="text" bind:value={sp.company} class="w-full bg-surface p-2 rounded text-white text-sm border border-gray-700" placeholder="Ex: Google, LVMH..." />
-                        </div>
-
-
-                        {/if}
                         <hr class="border-white/10" />
 
                         <!-- Interests -->
                         <div>
                             <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Intérêts</label>
                             <div class="flex flex-wrap gap-2 mb-2">
-                            {#each INTERESTS_LIST as interest}
-                                {@const selected = sp.interests.includes(interest)}
-                                <button
-                                onclick={() => {
-                                    if(selected) sp.interests = sp.interests.filter(i => i !== interest);
-                                    else sp.interests = [...sp.interests, interest];
-                                }}
-                                class={`px-2 py-1 rounded text-[10px] border ${selected ? 'bg-primary/20 border-primary text-primary' : 'border-gray-700 text-gray-500'}`}
-                                >
-                                {interest}
-                                </button>
-                            {/each}
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    {#each sp.interests as i}
+                                    <span class="text-xs font-bold px-3 py-1 bg-white/20 rounded-full text-white">{i}</span>
+                                    {/each}
+                                </div>
                             </div>
                         </div>
 
@@ -577,7 +383,7 @@
                         <div class="w-10 h-10 rounded-full bg-surface2 flex items-center justify-center text-primary border border-white/5 overflow-hidden">
                         {#if sp.gender !== 'ANY'}
                             <img 
-                            src={generateAvatarUrl(sp.gender, sp.skinTone || 'Light', sp.hairColor || 'Brown', sp.id)} 
+                            src={generateAvatarUrl(sp.gender, 'Light',  'Brown', sp.id)} 
                             class="w-full h-full object-cover" 
                             alt="avatar"
                             />

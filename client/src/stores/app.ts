@@ -10,9 +10,6 @@ import {
 import { generateMatchesForProfile, generateChatResponse, getWelcomeMessage } from '../services/matchService';
 import { generateAvatarUrl } from '../avatar';
 
-
-export const devMode = writable(false);
-
 // --- state stores ---
 export const firstVisit = writable(true); // persist as you wish (localStorage)
 export const showOnboarding = writable(true); // mirrored to firstVisit logic
