@@ -11,7 +11,5 @@ Stack js/npm/svelete with:
 
 ## Server :
 
-Stack python/uv/asyncio:
+Stack rust/sqlx/axum:
 - https://docs.zama.org/tfhe-rs/0.6-3/references/fine-grained-apis/boolean#executing-a-boolean-circuit
-- https://docs.zama.org/concrete/guides/deploy
-- https://docs.zama.org/concrete/guides/tfhers
