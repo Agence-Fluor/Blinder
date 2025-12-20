@@ -34,6 +34,10 @@ export const FUN_WORDS = [
   "Bambou", "Cerise", "Horizon", "Vague", "Pixel", "Moka"
 ];
 
+export const SEARCH_PROFILE_NAMES = [
+  "Love", "Fun", "Work"
+];
+
 export const DEFAULT_USER_PROFILE: UserProfile = {
   age: 25,
   gender: Gender.FEMALE,

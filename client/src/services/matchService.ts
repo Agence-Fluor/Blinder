@@ -1,5 +1,5 @@
 import { type UserProfile, type SearchProfile, type MatchProfile, Gender, Interest } from "../types";
-import { FUN_WORDS, DEPARTMENTS } from "../constants";
+import { FUN_WORDS, DEPARTMENTS, SEARCH_PROFILE_NAMES } from "../constants";
 import { generateAvatarUrl } from "../avatar"
 
 // --- HELPERS ---
@@ -13,12 +13,16 @@ const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (m
 export const MOCK_USERS: MatchProfile[] = Array.from({ length: 50 }).map((_, i) => {
   const gender = Math.random() > 0.5 ? Gender.FEMALE : Gender.MALE;
   const age = getRandomInt(18, 55);
+
+  const funWord = getRandomItem(FUN_WORDS);
+  const searchProfileName = getRandomItem(SEARCH_PROFILE_NAMES);
+
   
   return {
     id: `u_${i}`,
     searchProfileId: '',
-    searchProfileName: '',
-    funWord: '',
+    searchProfileName: searchProfileName,
+    funWord: funWord,
     avatarUrl: generateAvatarUrl(gender, 'Light', 'Brown', `u_${i}`), 
     
     age,

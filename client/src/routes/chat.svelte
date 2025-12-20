@@ -125,7 +125,7 @@
         <div class="ml-4 flex-1">
             <div class="flex justify-between items-baseline">
             <h3 class="text-white font-semibold">{session.match.searchProfileName} <span class="text-gray-300 ml-1 italic text-sm">{session.match.funWord}</span></h3>
-            <span class="text-xs text-gray-500">{session.match.matchPercentage}%</span>
+            <span class="text-xs text-gray-500"></span>
             </div>
             <p class="text-gray-400 text-sm truncate mt-1">{session.messages[session.messages.length-1].text}</p>
         </div>
