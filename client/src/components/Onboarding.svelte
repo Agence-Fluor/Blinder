@@ -15,8 +15,6 @@
     import { userProfile } from '../stores/app';
     import { BUBBLE_DATA } from '../bubble_data';
 
-  //init_keys()
-
   let { 
     profile = $bindable<UserProfile>(), 
     onComplete 
@@ -50,54 +48,60 @@
   const containerClass = "flex flex-col items-center justify-center min-h-screen bg-background p-6 animate-in fade-in duration-500 absolute inset-0 z-50";
   const titleClass = "text-2xl font-bold text-primary mb-2";
   const subtitleClass = "text-gray-400 text-sm mb-8 text-center max-w-m";
+
+  let key_generating = $state(false)
+
+  import BlinderLogo from './BlinderLogo.svelte';
 </script>
 
 <div>
 
-  {#if step > 0 && step !== 5}
+  {#if step > 0}
     <BackButton onClick={prevStep} />
   {/if}
 
-
   {#if step === 0}
     <div class={containerClass}>
-      <div class="w-24 h-24 bg-secondary rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(209,107,134,0.4)]">
-        <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-        class="h-24 w-24 text-white" viewBox="5 0 272 142"
-        preserveAspectRatio="xMidYMid meet">
-          <g transform="translate(0.000000,142.000000) scale(0.100000,-0.100000)"
-          fill="#d16b86" stroke="none">
-          <path d="M495 1008 c-99 -49 -190 -99 -202 -111 -27 -24 -29 -54 -7 -85 26
-          -37 65 -28 223 53 80 41 149 75 153 75 4 0 29 -24 57 -52 l50 -53 -92 -95
-          c-167 -172 -179 -187 -179 -214 0 -35 29 -66 61 -66 20 0 59 32 171 145 126
-          126 146 143 160 131 8 -8 43 -29 76 -48 l62 -33 -75 -170 c-82 -185 -84 -205
-          -30 -235 51 -29 71 -5 155 186 l75 172 31 -9 c17 -5 59 -14 94 -20 l62 -11 0
-          -177 c0 -173 1 -178 23 -199 29 -27 61 -28 87 -2 19 19 20 33 20 199 l0 178
-          91 18 c50 9 94 13 98 9 5 -5 39 -80 76 -167 74 -172 95 -198 143 -181 14 5 33
-          21 41 35 13 23 9 35 -60 194 -41 93 -75 172 -77 176 -2 4 6 10 16 14 11 3 47
-          23 80 45 l61 39 140 -145 c147 -151 162 -161 209 -128 18 12 22 24 20 49 -2
-          27 -27 59 -134 172 l-131 138 49 54 50 55 156 -78 c174 -86 205 -92 232 -43
-          29 51 6 71 -205 179 -104 53 -200 97 -212 98 -14 0 -32 -13 -50 -37 -50 -66
-          -147 -165 -201 -205 -66 -49 -198 -113 -277 -133 -287 -75 -611 43 -801 291
-          -53 69 -71 85 -97 83 -7 0 -93 -41 -192 -91z"/>
-          </g>
-        </svg>
+
+
+      <!--div class="w-20 h-10 bg-secondary rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(209,107,134,0.4)]">
+      </div-->
+      
+ 
+      <div class="h-30">
+        <BlinderLogo animate={key_generating}/>
       </div>
+
+      {#if key_generating}
+        <div class="mt-5 h-1 bg-gray-800 rounded-full" style="width: 250px; ">
+          <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {(1/3) * 100}%"></div>
+        </div>
+        <small class="mt-4">Génération des clés en cours...</small>
+      {:else}
+
       <h1 class="text-3xl font-bold text-white mb-2">Blinder</h1>
       <p class="text-gray-400 text-center mb-12">L'amour rend aveugle, pas vos données.</p>
-      <button onclick={nextStep} class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
-        Commencer l'expérience
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
 
-      <button onclick={nextStep} class="mt-8 bg-secondary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
-        Importer mes clés
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+   
+        <button onclick={async () => { 
+          key_generating = true;
+          await init_keys();
+          //key_generating = false;
+          //nextStep(); 
+        }} class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
+            Commencer l'expérience
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <button onclick={nextStep} class="mt-8 bg-secondary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
+          Importer mes clés
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        {/if}
     </div>
   {:else}
     <div class="fixed inset-0 bg-background z-50 flex flex-col animate-in slide-in-from-right duration-300">
