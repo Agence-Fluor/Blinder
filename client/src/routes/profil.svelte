@@ -155,7 +155,7 @@
                     <input type="number" bind:value={$userProfile.age} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1" />
                     </div>
                     <div>
-                    <label class="text-xs text-gray-500 uppercase font-bold">Département</label>
+                    <label class="text-xs text-gray-500 uppercase font-bold">Localisation</label>
                     <select bind:value={$userProfile.department} class="w-full bg-background p-2 rounded text-white border border-gray-700 focus:border-primary outline-none mt-1 text-sm">
                         {#each DEPARTMENTS as d}<option value={d}>{d}</option>{/each}
                     </select>
