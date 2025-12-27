@@ -54,6 +54,7 @@
 </script>
 
 <input
+  style="max-width: 230px; margin: auto;"
   type="text"
   bind:value={code}
   inputmode="numeric"

@@ -57,13 +57,16 @@ interface KeyDB {
 
 // ---------- Key generation, encryption, and storage ----------
 
+// we generate the keypair we asked
+// we encrypt it using AES
+// then we store it so it becomes non-extractable 
+
 async function safe_gen_and_store_key(
     keyDef: AsymmetricCryptoKeyType,
     userPassword: string,
     db: KeyDB
 ): Promise<{ publicKey: CryptoKey; privateKey: CryptoKey }> {
 
-  // generate asymmetric key pair (TypeScript now knows it returns CryptoKeyPair)
   const keyPair = await crypto.subtle.generateKey(
     keyDef.algorithm,
     true,
@@ -107,4 +110,10 @@ async function safe_gen_and_store_key(
     publicKey: keyPair.publicKey,
     privateKey: lockedPrivateKey,
   };
+}
+
+
+function init() {
+
+  // todo : use webauthm to safe_gen_and_store_key
 }

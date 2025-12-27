@@ -14,6 +14,7 @@ import { generateAvatarUrl } from '../avatar';
 
 export const firstVisit = writable(true);       // persist as you wish (todo: localStorage)
 export const showOnboarding = writable(true);   // mirrored to firstVisit logic
+export const appInstalled = writable(false);
 
 export const userProfile = writable<UserProfile>({ ...DEFAULT_USER_PROFILE });
 export const searchProfiles = writable<SearchProfile[]>(JSON.parse(JSON.stringify(DEFAULT_SEARCH_PROFILES)));

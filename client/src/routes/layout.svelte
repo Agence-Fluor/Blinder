@@ -7,8 +7,8 @@
 </script>
 
 
-<div class="min-h-screen bg-background text-gray-100 font-sans selection:bg-primary selection:text-white pb-safe">
-{@render children()}
+<div class="min-h-screen bg-background text-gray-100 font-sans selection:bg-primary selection:text-white">
+  {@render children()}
 </div>
 
 {#if !isActive("/onboarding")}
@@ -16,8 +16,7 @@
   <div class="h-16">
   </div>
 
-
-  <div class="fixed bottom-0 left-0 right-0 h-16 border-t border-white/5 flex justify-around items-center z-20 pb-safe  backdrop-blur-md">
+  <div class="fixed bottom-0 left-0 right-0 h-16 border-t border-white/5 flex justify-around items-center z-20 backdrop-blur-md">
     <button 
       onclick={() => navigate('/chat')} 
       class="flex flex-col items-center justify-center w-full h-full {isActive('/chat') ? 'text-primary' : 'text-gray-500'}"

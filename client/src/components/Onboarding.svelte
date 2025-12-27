@@ -11,9 +11,10 @@
   import { init_keys } from '../services/keyServices' 
   import BubbleSelector from "./BubbleSelector.svelte";
   import BackButton from "./BackButton.svelte";
-  import { onMount } from "svelte";
-    import { userProfile } from '../stores/app';
-    import { BUBBLE_DATA } from '../bubble_data';
+  import { userProfile } from '../stores/app';
+  import { BUBBLE_DATA } from '../bubble_data';
+
+
 
   let { 
     profile = $bindable<UserProfile>(), 
@@ -34,11 +35,20 @@
   });
 
   function nextStep() {
-    step++;
+    if (step == -1) {
+      // todo: handle login
+    } else {
+      step++;
+    }
   }
 
   function prevStep() {
-    step--;
+    if (step == -1) {
+     // si on etait sur page login -> retour au menu principal
+     step = 0;
+    } else {
+      step--;
+    }
   }
 
   let stepsCount = 6;///$state(3);
@@ -59,6 +69,7 @@
 
 
 <!--div class="fixed inset-0 bg-background z-50 flex flex-col animate-in slide-in-from-right duration-300"-->
+
 <div class={containerClass}>
   <!-- Progress Bar (Fixed) -->
   {#if step != 0}
@@ -68,7 +79,7 @@
       </div>
     </div>
   {/if}  
-  {#if step > 0}
+  {#if step !== 0}
     <BackButton onClick={prevStep} />
   {/if}
 
@@ -86,6 +97,18 @@
         <h1 class="text-3xl font-bold text-white mb-2">Blinder</h1>
         <p class="text-gray-400 text-center mb-12">L'amour rend aveugle, pas vos données.</p>
 
+      {:else if step == -1}
+
+          <div class="flex flex-col text-center">
+            <PhoneInput bind:inputDone={phoneInputDone} show_only_france_label={false}/>
+          </div>
+          <label class="mt-4 font-semibold text-white" for="mot-de-passe">Mot de passe</label>
+          <input
+            type="password"
+            name="mot-de-passe"
+            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
+          />
+
     
         {:else if step === 1}
 
@@ -98,8 +121,9 @@
               value="+33 (0)"
               class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
             -->
+          
+          
           </div>
-      
 
         {:else if step === 2}
 
@@ -227,7 +251,7 @@
         {/if}
 
         {#if step == 0}
-        <button onclick={nextStep} class="mt-8 bg-secondary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
+        <button onclick={() => {step = -1}} class="mt-8 bg-secondary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
           Se connecter
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 5l7 7-7 7" />

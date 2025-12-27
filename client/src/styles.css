@@ -38,6 +38,9 @@
 
 .font-sans { font-family: var(--font-sans); }
 
+body {
+  margin: 0px;
+}
 
 /* Disable text selection globally */
 :global(body) {

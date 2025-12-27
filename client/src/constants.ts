@@ -142,7 +142,7 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   age: 25,
   gender: Gender.FEMALE,
   country: "FR",
-  department: "75 - Paris",
+  department: "Ain",
   interests: [],
 };
 

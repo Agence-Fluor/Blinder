@@ -116,13 +116,13 @@
  
                 </small>
             </h2>
-            <button 
+            <!--button 
                 onclick={() => isEditingUser = !isEditingUser}
                 class="mr-42 text-primary text-sm flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full"
             >
                 <i class="fa-solid fa-download"></i>
                 Exporter les clés
-            </button>
+            </button-->
             <button 
                 onclick={() => isEditingUser = !isEditingUser}
                 class="text-primary text-sm flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full"

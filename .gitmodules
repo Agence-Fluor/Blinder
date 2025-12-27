@@ -4,3 +4,6 @@
 [submodule "third-party/tfhe-rs"]
 	path = third-party/tfhe-rs
 	url = https://github.com/zama-ai/tfhe-rs
+[submodule "third-party/pwa-install"]
+	path = third-party/pwa-install
+	url = git@github.com:Agence-Fluor/pwa-install.git
