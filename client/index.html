@@ -3,16 +3,22 @@
   <head>
     <meta charset="UTF-8">
     <!--meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <meta name="apple-mobile-web-app-title" content="Blinder">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <title>Blinder</title>
     <style>
-      body {
-        background-color: #121212;
-        color: #e2e8f0;
-        /* color: #d16b86; */
-        -webkit-tap-highlight-color: transparent;
+      * {
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -webkit-touch-callout: none;
       }
+
       /* Hide scrollbar for clean UI */
       .no-scrollbar::-webkit-scrollbar {
         display: none;
@@ -22,17 +28,23 @@
         scrollbar-width: none;
       }
 
-
-
-      html, body {
-        margin: 0;
-        padding: 0;
+      html {
         height: 100%;
-        width: 100%;
-        overflow-x: hidden;
-        background: transparent;
+        background: black;
       }
 
+      body {
+        min-height: 100%;
+        color: #e2e8f0;
+        -webkit-tap-highlight-color: transparent;
+        margin: 0;
+        overflow-x: hidden;
+        padding-top: constant(safe-area-inset-top);
+        padding-top: env(safe-area-inset-top);
+      }
+
+
+      
 
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -79,9 +91,43 @@
     <link rel="apple-touch-startup-image" href="assets/apple-splash-1334-750.jpg" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
     <link rel="apple-touch-startup-image" href="assets/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="assets/apple-splash-1136-640.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  
   </head>
-  <body>
-    <div id="top-bar"></div>
+  <style>
+
+:root {
+  --min-shim: 60px; /* empirical minimum so WebKit samples it */
+}
+
+/* Base shim */
+.fadebar {
+  /*
+  position: fixed;
+  width: 100%;
+  height: max(env(safe-area-inset-top), var(--min-shim));
+  min-height: var(--min-shim);
+  pointer-events: none;
+  z-index: 9999;
+*/
+  /*
+  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
+*/
+
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 1) 0%,
+    rgba(18, 18, 18, 0) 100%
+  );
+}
+
+/* Optional: fade it out on pages that don't want it */
+.statusbar-blur.hidden { opacity: 0; transition: opacity .18s linear; }
+
+
+  </style>
+  <body class="bg-background">
+    <!--div class="statusbar-blur" aria-hidden="true"></div-->
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
     <script>
@@ -97,6 +143,7 @@
       // Optional: Disable touch callout (iOS)
       document.body.style.webkitTouchCallout = 'none';
       document.body.style.userSelect = 'none';
+
     </script>
   </body>
 </html>

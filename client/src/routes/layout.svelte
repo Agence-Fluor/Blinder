@@ -6,7 +6,6 @@
 
 </script>
 
-
 <div class="min-h-screen bg-background text-gray-100 font-sans selection:bg-primary selection:text-white">
   {@render children()}
 </div>

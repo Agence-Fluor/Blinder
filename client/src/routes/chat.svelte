@@ -79,7 +79,7 @@
       if (confirm("Are you sure?")) {
         alert("Match deleted");
       }
-    }}>Supprimer ce match</button>
+    }}>Supprimer</button>
   </header>
 
     <div bind:this={chatContainer} class="flex-1 p-4 overflow-y-auto no-scrollbar bg-black/10 space-y-3">
@@ -107,9 +107,9 @@
 </div>
 </div>
 {:else}
-      <div class="pt-10 pb-24 px-4 min-h-screen">
+      <div class="pt-10 pb-24 min-h-screen">
             <h2 class="text-lg ml-4 font-semibold text-white inline-block">Messages</h2>
-            <a href="#" class="mr-4 float-right text-primary text-sm"> Profile chiffré pour 200/500 personnes. 12 matches. 38 incompatibles. 150 en attente.</a>
+            <!--a href="#" class="mr-4 float-right text-primary text-sm"> Profile chiffré pour 200/500 personnes. 12 matches. 38 incompatibles. 150 en attente.</a-->
 <!-- Conversations List -->
 <main class="p-4 flex-1 space-y-4">
     {#if $sessions.length === 0}
@@ -122,21 +122,34 @@
         on:click={() => openSession(session.matchId)}
         class="flex items-center p-4 bg-surface rounded-2xl shadow-sm cursor-pointer hover:bg-surface2/40 border border-white/5"
         >
-        <div class="relative">
-            <img src={session.match.avatarUrl} alt="avatar" class="w-14 h-14 rounded-full object-cover border-2 border-primary" />
-            {#if session.unread}
+        <div class="relative flex-shrink-0 w-14 h-14">
+          <img
+            src={session.match.avatarUrl}
+            alt="avatar"
+            class="w-full h-full rounded-full object-cover border-2 border-primary bg-surface"
+          />
+          {#if session.unread}
             <span class="absolute top-0 right-0 w-3 h-3 bg-primary rounded-full border border-surface"></span>
-            {/if}
+          {/if}
         </div>
 
-        <div class="ml-4 flex-1">
-            <div class="flex justify-between items-baseline">
-            <h3 class="text-white font-semibold">{session.match.searchProfileName} <span class="text-gray-300 ml-1 italic text-sm">{session.match.funWord}</span></h3>
-            <span class="text-xs text-gray-500"></span>
-            </div>
-            <p class="text-gray-400 text-sm truncate mt-1">{session.messages[session.messages.length-1].text}</p>
+
+        <div class="ml-4 flex-1 min-w-0 overflow-hidden">
+          <div class="flex justify-between items-baseline min-w-0 overflow-hidden">
+            <h3 class="text-white font-semibold truncate overflow-hidden break-words">
+              {session.match.searchProfileName}
+              <span class="text-gray-300 ml-1 italic text-sm">
+                {session.match.funWord}
+              </span>
+            </h3>
+          </div>
+
+          <p class="text-gray-400 text-sm mt-1 line-clamp-2 overflow-hidden break-words">
+            {session.messages[session.messages.length - 1].text}
+          </p>
         </div>
-        </article>
+
+      </article>
     {/each}
     {/if}
 </main>

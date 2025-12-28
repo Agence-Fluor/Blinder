@@ -50,7 +50,7 @@
   description="L'amour rend aveugle - pas vos données. Essayez notre application de chat sécurisée et rencontrez de futurs collègues ou votre âme soeur."
   disable-close="true"
   disable-install-description="true"
-
+  disable-chrome="true"
   disable-android-fallback="true"
 
   bind:this={pwaInstall}

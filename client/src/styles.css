@@ -39,6 +39,7 @@
 .font-sans { font-family: var(--font-sans); }
 
 body {
+  background-color: black;
   margin: 0px;
 }
 

@@ -70,10 +70,12 @@
 
 <!--div class="fixed inset-0 bg-background z-50 flex flex-col animate-in slide-in-from-right duration-300"-->
 
-<div class={containerClass}>
+<div  class={containerClass}>
   <!-- Progress Bar (Fixed) -->
   {#if step != 0}
-    <div class="fixed top-0 left-0 right-0 z-[110] p-6 pt-4 backdrop-blur-2xl bg-background/80 border-b border-white/10">
+    <!--div class="fixed top-0 left-0 right-0 z-[110] p-6 pt-4 backdrop-blur-2xl bg-background/80 border-b border-white/10"-->
+
+    <div class="fixed top-0 left-0 right-0 z-[110] p-6 pt-4 backdrop-blur-5 fadebar">
       <div class="w-full h-1 bg-gray-800 rounded-full">
         <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {(step / stepsCount) * 100}%"></div>
       </div>
