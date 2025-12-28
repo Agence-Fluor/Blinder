@@ -1,7 +1,7 @@
 <script>
     import { tick } from 'svelte';
 
-    let { inputDone = $bindable(), show_only_france_label = true } = $props();
+    let { inputDone = $bindable() } = $props();
 
     let indicatifs = [
       { name: "Guyane Française", prefix: "+594", mobileStart: "0" },
@@ -83,7 +83,7 @@
     }
 </script>
 
-<div class="w-50"> <!-- Container to fix width -->
+<div class="w-50" style="margin-left: auto; margin-right: auto;"> <!-- Container to fix width -->
   <label class="mt-4 font-semibold text-white" for="indicatif">Indicatif</label>
   <br/>
   <select
@@ -109,8 +109,4 @@
     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition bg-black text-white"
   />
 
-  {#if show_only_france_label}
-    <br/><br/>
-    <i class="mt-4 text-white">On est juste en France pour l'instant.</i>
-  {/if}
 </div>

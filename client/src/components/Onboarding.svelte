@@ -123,7 +123,8 @@
               value="+33 (0)"
               class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
             -->
-          
+              <br/><br/>
+    <i class="mt-4 text-white">On est juste en France pour l'instant.</i>
           
           </div>
 
@@ -132,8 +133,8 @@
           <div class="flex flex-col text-center">
 
             <p>Nous venons de vous envoyer un code par SMS au +33 xx xx xx xx xx, merci de le saisir.</p>
+            <div class="mt-4"></div>
 
-            <label class="mt-2 font-semibold text-white" for="code">Code de confirmation</label>
             <SmsCodeInput />
 
             <i class="mt-4">Si vous n'avez rien reçu après quelques minutes, <a href="#" class="text-primary">cliquez-ici</a> pour le renvoyer.</i>

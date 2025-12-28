@@ -1,63 +1,68 @@
 <script>
-  import { tick } from 'svelte';
+    import { tick } from 'svelte';
 
-  const PREFIX = 'BLINDER - ';
-  let rawDigits = '';
-  let code = PREFIX;
-  let prevValue = code;
+    let { inputDone = $bindable() } = $props();
 
-  function formatCode(digits) {
-    digits = digits.slice(0, 9); // max 9 chiffres
-    let formatted = '';
-    for (let i = 0; i < digits.length; i++) {
-      formatted += digits[i];
-      if ((i + 1) % 3 === 0 && i + 1 < digits.length) {
-        formatted += ' - ';
-      }
-    }
-    // si on a exactement 3 ou 6 chiffres, ajouter tiret final (sauf si max 9)
-    if (digits.length % 3 === 0 && digits.length !== 0 && digits.length < 9) {
-      formatted += ' - ';
-    }
-    return PREFIX + formatted;
-  }
+    const defaultIndicatif = 4;
+    let rawDigits = $state('');
+    let code = $state(formatCode(rawDigits));
+    let prevValue = $state(code);
 
-  function handleInput(e) {
-    const current = e.target.value;
-
-    // Empêche la suppression du préfixe
-    if (!current.startsWith(PREFIX)) {
-      e.target.value = prevValue;
-      setTimeout(() => {
-        e.target.selectionStart = e.target.selectionEnd = prevValue.length;
-      });
-      return;
-    }
-
-    // Détecter backspace ou suppression
-    if (current.length < prevValue.length) {
-      if (rawDigits.length > 0) rawDigits = rawDigits.slice(0, -1);
-    } else {
-      const typed = current.replace(PREFIX, '').replace(/\D/g, '');
-      rawDigits = typed;
-    }
-
-    code = formatCode(rawDigits);
-
-    // Remettre le curseur à la fin
-    setTimeout(() => {
-      e.target.selectionStart = e.target.selectionEnd = code.length;
+    $effect(() => { 
+        if (rawDigits.length > 9) rawDigits = rawDigits.slice(0,9);
+        inputDone = rawDigits.length === 9;
     });
 
-    prevValue = code;
-  }
+    function getPrefix() {
+      return `BLINDER - `;
+    }
+
+    function formatCode(digits) {
+      digits = digits.slice(0, 9);
+      let formatted = '';
+      for (let i = 0; i < digits.length; i++) {
+        formatted += digits[i];
+        if ((i + 1) % 3 === 0 && i != 8)
+          formatted += ' - ';
+      }
+      return getPrefix() + formatted;
+    }
+
+    function handleInput(e) {
+      let current = e.target.value;
+      if (!current.startsWith(getPrefix())) {
+        e.target.value = prevValue;
+        setTimeout(() => {
+          e.target.selectionStart = e.target.selectionEnd = prevValue.length;
+        });
+        return;
+      }
+
+      if (current.length < prevValue.length) {
+        if (rawDigits.length > 0) rawDigits = rawDigits.slice(0, -1);
+      } else {
+        rawDigits = current.replace(getPrefix(), '').replace(/\D/g, '');
+      }
+
+      code = formatCode(rawDigits);
+      setTimeout(() => {
+        e.target.selectionStart = e.target.selectionEnd = code.length;
+      });
+      prevValue = code;
+    }
+
 </script>
 
-<input
-  style="max-width: 230px; margin: auto;"
-  type="text"
-  bind:value={code}
-  inputmode="numeric"
-  on:input={handleInput}
-  class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
-/>
+<div class="w-57" style="margin-left: auto; margin-right: auto;">
+
+  <label class="mt-4 font-semibold text-white" for="code">Code de confirmation</label>
+  <br/>
+  <input
+    id="codeInput"
+    inputmode="numeric"
+    bind:value={code}
+    on:input={handleInput}
+    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition bg-black text-white"
+  />
+
+</div>
