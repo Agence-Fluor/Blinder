@@ -1,6 +1,6 @@
 # Blinder 
 
-Blinder is a dating that aims to keep user data private by using FHE circuits. 
+Blinder is a dating app that aims to keep user data private by using FHE circuits. 
 
 ## Client : 
 
