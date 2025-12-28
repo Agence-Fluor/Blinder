@@ -350,9 +350,9 @@
                     onclick={async () => {
                         const permission = await Notification.requestPermission();
                         if (permission === 'granted') {
-                            console.log('Notifications permission granted.');
+                            alert('Notifications permission granted.');
                         } else {
-                            console.warn('Notifications permission denied.');
+                            alert('Notifications permission denied.');
                         }
                     }}
                     class="px-4 py-2 m-2 rounded-full text-sm border border-primary text-primary bg-primary/10 hover:bg-primary/20 transition-colors"

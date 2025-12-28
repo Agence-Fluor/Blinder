@@ -105,7 +105,9 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
+ "base64",
  "chrono",
+ "rand 0.8.5",
  "serde",
  "serde_json",
  "sqlx",

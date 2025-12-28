@@ -1,7 +1,7 @@
 <script>
     import { tick } from 'svelte';
 
-    let { inputDone = $bindable() } = $props();
+    let { inputDone = $bindable(), codeValue = $bindable() } = $props();
 
     const defaultIndicatif = 4;
     let rawDigits = $state('');
@@ -9,8 +9,10 @@
     let prevValue = $state(code);
 
     $effect(() => { 
-        if (rawDigits.length > 9) rawDigits = rawDigits.slice(0,9);
-        inputDone = rawDigits.length === 9;
+        if (rawDigits.length > 6) rawDigits = rawDigits.slice(0, 6);
+        inputDone = rawDigits.length === 6;
+        // Export the raw code digits (6 digits)
+        codeValue = rawDigits;
     });
 
     function getPrefix() {
@@ -18,11 +20,11 @@
     }
 
     function formatCode(digits) {
-      digits = digits.slice(0, 9);
+      digits = digits.slice(0, 6);
       let formatted = '';
       for (let i = 0; i < digits.length; i++) {
         formatted += digits[i];
-        if ((i + 1) % 3 === 0 && i != 8)
+        if ((i + 1) % 3 === 0 && i != 5)
           formatted += ' - ';
       }
       return getPrefix() + formatted;

@@ -1,7 +1,7 @@
 <script>
     import { tick } from 'svelte';
 
-    let { inputDone = $bindable() } = $props();
+    let { inputDone = $bindable(), phoneNumber = $bindable() } = $props();
 
     let indicatifs = [
       { name: "Guyane Française", prefix: "+594", mobileStart: "0" },
@@ -27,6 +27,9 @@
     $effect(() => { 
         if (rawDigits.length > 9) rawDigits = rawDigits.slice(0,9);
         inputDone = rawDigits.length === 9;
+        // Export full phone number (prefix + digits)
+        // This will automatically track selectedIndicatif and rawDigits
+        phoneNumber = selectedIndicatif.prefix + selectedIndicatif.mobileStart + rawDigits;
     });
 
     function getPrefix() {

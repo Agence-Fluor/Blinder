@@ -34,9 +34,50 @@
     );
   });
 
-  function nextStep() {
+  async function nextStep() {
     if (step == -1) {
-      // todo: handle login
+      // WebAuthn authentication is handled by the button click
+      return;
+    } else if (step === 1) {
+      // When moving from phone input to OTP, send OTP
+      if (phoneNumber && !sendingOtp) {
+        sendingOtp = true;
+        otpError = '';
+        try {
+          const response = await sendOtp(phoneNumber);
+          if (response.success) {
+            step++;
+          } else {
+            otpError = response.message;
+          }
+        } catch (error) {
+          otpError = error instanceof Error ? error.message : 'Failed to send OTP';
+          console.error('Error sending OTP:', error);
+        } finally {
+          sendingOtp = false;
+        }
+      } else {
+        step++;
+      }
+    } else if (step === 2) {
+      // When moving from OTP input, verify OTP first
+      if (otpCode && otpCode.length === 6 && !verifyingOtp) {
+        verifyingOtp = true;
+        otpError = '';
+        try {
+          const response = await verifyOtp(phoneNumber, otpCode);
+          if (response.success) {
+            step++;
+          } else {
+            otpError = response.message;
+          }
+        } catch (error) {
+          otpError = error instanceof Error ? error.message : 'Failed to verify OTP';
+          console.error('Error verifying OTP:', error);
+        } finally {
+          verifyingOtp = false;
+        }
+      }
     } else {
       step++;
     }
@@ -63,8 +104,20 @@
   import BlinderLogo from './BlinderLogo.svelte';
   import PhoneInput from './PhoneInput.svelte';
   import SmsCodeInput from './SmsCodeInput.svelte';
+  import { sendOtp, verifyOtp } from '../services/onboardingApi';
+  import { startWebAuthnAuthentication, startWebAuthnRegistration, isWebAuthnSupported } from '../services/webauthnService';
 
-  let phoneInputDone = $state(false)
+  let phoneInputDone = $state(false);
+  let phoneNumber = $state('');
+  let otpCode = $state('');
+  let otpInputDone = $state(false);
+  let sendingOtp = $state(false);
+  let verifyingOtp = $state(false);
+  let otpError = $state('');
+  let authenticating = $state(false);
+  let authError = $state('');
+  let registering = $state(false);
+  let registerError = $state('');
 </script>
 
 
@@ -102,20 +155,44 @@
       {:else if step == -1}
 
           <div class="flex flex-col text-center">
-            <PhoneInput bind:inputDone={phoneInputDone} show_only_france_label={false}/>
+            <PhoneInput bind:inputDone={phoneInputDone} bind:phoneNumber={phoneNumber} show_only_france_label={false}/>
           </div>
-          <label class="mt-4 font-semibold text-white" for="mot-de-passe">Mot de passe</label>
-          <input
-            type="password"
-            name="mot-de-passe"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
-          />
+          
+          {#if !isWebAuthnSupported()}
+            <p class="mt-4 text-red-500 text-sm">WebAuthn n'est pas supporté par votre navigateur.</p>
+          {:else}
+            <button 
+              onclick={async () => {
+                if (!phoneNumber || authenticating) return;
+                authenticating = true;
+                authError = '';
+                try {
+                  await startWebAuthnAuthentication(phoneNumber);
+                  // Authentication successful, proceed to next step
+                  step = 0; // Go back to main menu or navigate to chat
+                } catch (error) {
+                  authError = error instanceof Error ? error.message : 'Échec de l\'authentification';
+                  console.error('WebAuthn authentication failed:', error);
+                } finally {
+                  authenticating = false;
+                }
+              }}
+              disabled={!phoneInputDone || authenticating}
+              class="mt-6 bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {authenticating ? 'Authentification...' : 'S\'authentifier avec WebAuthn'}
+            </button>
+          {/if}
+          
+          {#if authError}
+            <p class="mt-4 text-red-500 text-sm">{authError}</p>
+          {/if}
 
     
         {:else if step === 1}
 
           <div class="flex flex-col text-center">
-            <PhoneInput bind:inputDone={phoneInputDone} />
+            <PhoneInput bind:inputDone={phoneInputDone} bind:phoneNumber={phoneNumber} />
 
             <!--input
               type="text"
@@ -132,29 +209,55 @@
 
           <div class="flex flex-col text-center">
 
-            <p>Nous venons de vous envoyer un code par SMS au +33 xx xx xx xx xx, merci de le saisir.</p>
+            <p>Nous venons de vous envoyer un code par SMS au {phoneNumber}, merci de le saisir.</p>
             <div class="mt-4"></div>
 
-            <SmsCodeInput />
+            <SmsCodeInput bind:inputDone={otpInputDone} bind:codeValue={otpCode} />
 
-            <i class="mt-4">Si vous n'avez rien reçu après quelques minutes, <a href="#" class="text-primary">cliquez-ici</a> pour le renvoyer.</i>
+            {#if otpError}
+              <p class="mt-4 text-red-500 text-sm">{otpError}</p>
+            {/if}
+
+            <i class="mt-4">Si vous n'avez rien reçu après quelques minutes, <a href="#" class="text-primary" onclick={(e) => { e.preventDefault(); if (phoneNumber) sendOtp(phoneNumber); }}>cliquez-ici</a> pour le renvoyer.</i>
 
           </div>
 
 
         {:else if step === 3}
-        <label class="font-semibold text-white" for="mot-de-passe">Mot de passe</label>
-          <input
-            type="password"
-            name="mot-de-passe"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
-          />
-
-          <label class="mt-4 font-semibold text-white" for="mot-de-passe">Confirmation du mot de passe</label>
-          <input
-            type="password"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
-          />
+          <div class="flex flex-col items-center text-center">
+            <h2 class={titleClass}>Créer votre clé d'authentification</h2>
+            <p class={subtitleClass}>Utilisez WebAuthn pour sécuriser votre compte. Cela utilise l'authentification biométrique de votre appareil (Touch ID, Face ID, etc.)</p>
+            
+            {#if !isWebAuthnSupported()}
+              <p class="mt-4 text-red-500 text-sm">WebAuthn n'est pas supporté par votre navigateur. Veuillez utiliser un navigateur moderne.</p>
+            {:else}
+              <button 
+                onclick={async () => {
+                  if (!phoneNumber || registering) return;
+                  registering = true;
+                  registerError = '';
+                  try {
+                    await startWebAuthnRegistration(phoneNumber);
+                    // Registration successful, proceed to next step
+                    step++;
+                  } catch (error) {
+                    registerError = error instanceof Error ? error.message : 'Échec de l\'enregistrement';
+                    console.error('WebAuthn registration failed:', error);
+                  } finally {
+                    registering = false;
+                  }
+                }}
+                disabled={registering}
+                class="mt-6 bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {registering ? 'Enregistrement...' : 'Créer une clé d\'authentification'}
+              </button>
+            {/if}
+            
+            {#if registerError}
+              <p class="mt-4 text-red-500 text-sm">{registerError}</p>
+            {/if}
+          </div>
 
         {:else if step === 4}
 
@@ -239,11 +342,18 @@
         {#if 
           (step != 1) || phoneInputDone
         }
-        <button onclick={async () => { 
-          nextStep(); 
-        }} class="mt-6 bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2">
+        <button 
+          onclick={async () => { 
+            await nextStep(); 
+          }} 
+          disabled={sendingOtp || verifyingOtp || (step === 2 && (!otpInputDone || otpCode.length !== 6))}
+          class="mt-6 bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             {#if step == 0}
               Commencer l'expérience
+            {:else if step === 1}
+              {sendingOtp ? 'Envoi en cours...' : 'Continuer'}
+            {:else if step === 2}
+              {verifyingOtp ? 'Vérification...' : 'Continuer'}
             {:else}
               Continuer
             {/if}

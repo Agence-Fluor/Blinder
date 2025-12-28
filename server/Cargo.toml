@@ -15,3 +15,5 @@ tower = "0.5"
 tower-http = { version = "0.6", features = ["cors"] }
 anyhow = "1.0"
 thiserror = "1.0"
+rand = "0.8"
+base64 = "0.22"

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAuthn Demo</title>
+</head>
+<body>
+  <h1>WebAuthn Demo (Frontend Only)</h1>
+
+  <button id="registerBtn">Register</button>
+  <button id="authenticateBtn">Authenticate</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    // Handle output for demonstration purposes
+    function showOutput(message) {
+      document.getElementById('output').textContent = JSON.stringify(message, null, 2);
+    }
+
+    // Dummy storage for credentials (in a real app, these would be on the server)
+    let storedCredentials = null;
+
+    // Step 1: Registration using WebAuthn API
+    async function register() {
+      try {
+        // Make sure WebAuthn is supported
+        if (!window.PublicKeyCredential) {
+          alert("WebAuthn is not supported by your browser.");
+          return;
+        }
+
+        // Create a WebAuthn registration challenge (normally sent from a server)
+        const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge);
+
+        const publicKey = {
+          challenge: challenge,
+          rp: {
+            name: "WebAuthn Demo"
+          },
+          user: {
+            id: new TextEncoder().encode("user123"),
+            name: "user@example.com",
+            displayName: "Demo User"
+          },
+          pubKeyCredParams: [{
+            type: "public-key",
+            alg: -7 // ES256
+          }],
+          timeout: 60000,
+          attestation: "direct"
+        };
+
+        // WebAuthn Registration: Create credentials (this would be done by the browser)
+        const credential = await navigator.credentials.create({ publicKey });
+
+        // Normally here you would send the credential to your server for verification and storage
+        storedCredentials = credential;
+        showOutput("Registration successful: " + credential);
+        alert("Registration successful!");
+
+      } catch (error) {
+        console.error("Registration failed:", error);
+        alert("Registration failed: " + error.message);
+      }
+    }
+
+    // Step 2: Authentication using WebAuthn API
+    async function authenticate() {
+      try {
+        if (!storedCredentials) {
+          alert("No registered credentials found.");
+          return;
+        }
+
+        // Create a WebAuthn authentication challenge (normally from a server)
+        const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge);
+
+        const publicKey = {
+          challenge: challenge,
+          allowCredentials: [{
+            type: "public-key",
+            id: storedCredentials.id
+          }],
+          timeout: 60000
+        };
+
+        // WebAuthn Authentication: Get credentials
+        const assertion = await navigator.credentials.get({ publicKey });
+
+        // Normally, you would send the assertion to the server to verify the authenticity
+        showOutput("Authentication successful: " + assertion);
+        alert("Authentication successful!");
+
+      } catch (error) {
+        console.error("Authentication failed:", error);
+        alert("Authentication failed: " + error.message);
+      }
+    }
+
+    // Event listeners for registration and authentication buttons
+    document.getElementById('registerBtn').addEventListener('click', register);
+    document.getElementById('authenticateBtn').addEventListener('click', authenticate);
+  </script>
+</body>
+</html>
