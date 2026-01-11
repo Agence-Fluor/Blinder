@@ -6,41 +6,41 @@
 
   import { appInstalled } from "./stores/app"
   import { onMount } from "svelte";
+  import InAppNotifications from "./components/InAppNotifications.svelte";
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
-      let reg = await navigator.serviceWorker.register('/sw.js')
+      try {
+        const reg = await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker registered:', reg);
+        
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          if (event.data && event.data.type === 'PUSH_NOTIFICATION') {
+            // Handle push notification data
+            console.log('Push notification received:', event.data.payload);
+            // TODO: Handle login request notification
+            // This would trigger the QR code encryption flow on old device
+          }
+        });
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+      }
     });
   }
 
   import '@khmyznikov/pwa-install';
-
-    
-  const _eventDispatcher = (_element: Element, name: string, message: string) => {
-      const event  = new CustomEvent(name, {
-          detail: {
-            message
-          }
-      });
-      console.log("dispatched")
-      _element.dispatchEvent(event);
-  }
-
   let pwaInstall;
-
   onMount(() => {
     const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
     const isInstalled =
       window.navigator.standalone === true ||
       ["fullscreen", "standalone", "minimal-ui"].some(
           (displayMode) => window.matchMedia('(display-mode: ' + displayMode + ')').matches
       );
-
     if (isMobile && pwaInstall && typeof pwaInstall.showDialog === 'function' && !isInstalled) {
       pwaInstall.showDialog(true);
     }
-
   })
 </script>
 
@@ -57,3 +57,4 @@
 >
 </pwa-install>
 <Router />
+<InAppNotifications />

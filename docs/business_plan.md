@@ -11,11 +11,3 @@
 - Ability to reach groups for PSI-based ads 
 
 => **0.07 euro par / message / personne atteinte**
-
-
-
-
-
----------------------
-
-s3

@@ -1,6 +1,5 @@
 import { type UserProfile, type SearchProfile, type MatchProfile, Gender } from "../types";
 import { FUN_WORDS, DEPARTMENTS, SEARCH_PROFILE_NAMES } from "../constants";
-import { generateAvatarUrl } from "../avatar"
 import { BUBBLE_DATA } from "../bubble_data"
 
 // --- HELPERS ---
@@ -24,7 +23,7 @@ export const MOCK_USERS: MatchProfile[] = Array.from({ length: 50 }).map((_, i) 
     searchProfileId: '',
     searchProfileName: searchProfileName,
     funWord: funWord,
-    avatarUrl: generateAvatarUrl(gender, 'Light', 'Brown', `u_${i}`), 
+    avatarUrl: '', // Not used - AvatarComponent generates it directly 
     
     age,
     gender,

@@ -1,0 +1,7 @@
+
+- on match : we should send encrypted depertement, age, avatar. 
+
+avoid brutforce => restrict number of items that may identify a user :
+    - few avatar options 
+    - dep, 
+    phonenumber shall be avoided... maintain a list of user-matchid-pk sent to an other user, and keep listening theses

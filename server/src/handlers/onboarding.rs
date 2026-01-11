@@ -1,15 +1,9 @@
 use axum::extract::State;
 use axum::Json;
 use serde::{Deserialize, Serialize};
-use sqlx::PgPool;
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub type AppState = (Option<PgPool>, OtpStore);
-
-// In-memory store for OTPs (phone -> (code, timestamp))
-pub type OtpStore = Arc<Mutex<HashMap<String, (String, u64)>>>;
+use crate::handlers::common::AppState;
 
 #[derive(Debug, Deserialize)]
 pub struct SendOtpRequest {
@@ -42,7 +36,7 @@ fn generate_otp() -> String {
 }
 
 pub async fn send_otp(
-    State((_pool, otp_store)): State<AppState>,
+    State((_pool, otp_store, _push_subscriptions)): State<AppState>,
     Json(body): Json<SendOtpRequest>,
 ) -> Json<SendOtpResponse> {
     let code = generate_otp();
@@ -67,7 +61,7 @@ pub async fn send_otp(
 }
 
 pub async fn verify_otp(
-    State((_pool, otp_store)): State<AppState>,
+    State((_pool, otp_store, _push_subscriptions)): State<AppState>,
     Json(body): Json<VerifyOtpRequest>,
 ) -> Json<VerifyOtpResponse> {
     let current_time = SystemTime::now()

@@ -1,4 +1,4 @@
-# Registration # SOLUTION 1
+# Account security
 
 **Problems / answers :**
 - Check if user is not a bot:
@@ -8,60 +8,31 @@
         - Later: use dark-web to get accurate MNP database
 
 - Authentification: 
-    - Register via WebAuthn
+    - Register via WebAuthn + QR code (for private key / history imports)
 
-- Recovery / Device change:
-    - Via QR code + user password
-
-**Summary**
-- SMS
-- WebAuthn
-- Password
+- Recovery / All device lost:
+    - NEW onboarding but we keep contacts (anno) / payements rest have to be retyped 
 
 
-# Registration # SOLUTION 2
+# Message security
 
-**Problems / answers :**
-- Check if user is not a bot:
-    - Captcha/PoW
-    - SMS confirmation
-        - Heuristic phone number check 
-        - Later: use dark-web to get accurate MNP database
+v1
+- FCS : Forward Secrecy
+    -> Clé privée volée; messages passé sauvés ?
 
-- Authentification:
-    - SMS OTP or SMS+Password
+v2 : besoin mdp user ?
+- PCS : Post-Compromise Security
+    -> On protège les messages dans le futur si une clé de session est volée
+    -> inutile si clés privées stockés en clair 
 
-
-- Recovery / Device change:
-    - Via QR code + user password
-
-**Summary**
-- SMS
-- Password
+    -> pour les stocker autrement -> besoin mdp user ... 
 
 
-# Registration # SOLUTION 3
+=> une clé FHE clair 
+=> clé chat chiffrée par device
 
-**Problems / answers :**
-- Check if user is not a bot:
-    - Captcha/PoW
-    - SMS confirmation
-        - Heuristic phone number check 
-        - Later: use dark-web to get accurate MNP database
+# PSI Security
 
-- Authentification: 
-    - Register via WebAuthn
-
-- Recovery / Device change:
-    - Via QR code
-
-**Summary**
-- SMS
-- WebAuthn
-
-**Issues**
-- How to encrypt extractable private key without user-supplied password ?
-- => BACKUP (user clear data) is available by definition
-- => PRIVATE-KEYS shall be per device
-
-- => WE SHARE only backup and create new identity per device ? + share fhe key
+Alice encrypt his choices with Bob public key
+Server evaluate circuit
+Bob decrypt circuit

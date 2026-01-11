@@ -7,3 +7,9 @@
 [submodule "third-party/pwa-install"]
 	path = third-party/pwa-install
 	url = git@github.com:Agence-Fluor/pwa-install.git
+[submodule "third-party/avataaars-svelte"]
+	path = third-party/avataaars-svelte
+	url = git@github.com:Agence-Fluor/avataaars-svelte.git
+[submodule "third-party/2key-ratchet"]
+	path = third-party/2key-ratchet
+	url = git@github.com:Agence-Fluor/2key-ratchet.git

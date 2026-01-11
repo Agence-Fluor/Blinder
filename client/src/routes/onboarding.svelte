@@ -8,6 +8,8 @@
 
   const handleComplete = () => {
     navigate('/chat');
+
+    
   }
 </script>
 

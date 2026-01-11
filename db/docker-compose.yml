@@ -14,3 +14,18 @@ services:
     volumes:
       - ./postgres:/var/lib/postgresql:rw
       - ./create:/docker-entrypoint-initdb.d:ro
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: "pgadmin"
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"  # Change to your desired admin email
+      PGADMIN_DEFAULT_PASSWORD: "admin"         # Change to your desired password
+    ports:
+      - "8080:80"  # Expose pgAdmin on port 8080
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin  # Persist pgAdmin data
+
+volumes:
+  pgadmin_data:

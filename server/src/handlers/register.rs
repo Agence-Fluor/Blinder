@@ -2,7 +2,7 @@ use axum::extract::State;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 
-use crate::handlers::onboarding::AppState;
+use crate::handlers::common::AppState;
 
 #[derive(Debug, Deserialize)]
 pub struct RegisterRequest {
@@ -17,7 +17,7 @@ pub struct RegisterResponse {
 }
 
 pub async fn register(
-    State((pool, _otp_store)): State<AppState>,
+    State((pool, _otp_store, _push_subscriptions)): State<AppState>,
     Json(body): Json<RegisterRequest>,
 ) -> Json<RegisterResponse> {
     match pool {

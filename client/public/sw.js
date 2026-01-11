@@ -1,22 +1,15 @@
-const cacheName = 'my-pwa-cache-v1';
-const assets = [
-//  '/',
-//  '/index.html',
-//  '/style.css',
-//  '/app.js',
-//  '/icons/icon-192.png'
-];
+const cacheName = 'blinder-pwa-v1';
 
-// Install event
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(cacheName).then(cache => cache.addAll(assets))
-  );
+self.addEventListener('install', (event) => {
 });
 
-// Fetch event (serve from cache if available)
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
-  );
+self.addEventListener('activate', (event) => {
 });
+
+self.addEventListener('push', (event) => {
+});
+
+// TODO: handle push types :
+// - messages
+// - login request
+// - new match popup

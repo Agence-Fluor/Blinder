@@ -144,6 +144,12 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   country: "FR",
   department: "Ain",
   interests: [],
+  avatarHair: 'LongHairStraight',
+  avatarHairColor: 'BrownDark',
+  avatarEyes: 'Default',
+  avatarEyeColor: 'Brown',
+  avatarAccessories: 'Blank',
+  avatarSkin: 'Light',
 };
 
 export const DEFAULT_SEARCH_PROFILES: SearchProfile[] = [

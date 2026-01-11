@@ -1,11 +1,13 @@
 <script lang="ts">
+
   import { navigate } from 'sv-router/generated';
   import { onMount } from 'svelte';
+  import { getCurrentPhone } from '../services/authService';
 
-  let showOnboarding = $state(true);
-
-  onMount(() => {
-    navigate(showOnboarding ? '/onboarding' : '/chat');
+  onMount(async () => {
+    const phone = await getCurrentPhone();//loadProfile();
+    console.log("phone...", phone)
+    navigate(!phone ? '/onboarding' : '/chat');
   });
 </script>
 

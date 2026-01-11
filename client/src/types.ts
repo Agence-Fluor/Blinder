@@ -17,6 +17,16 @@ export interface UserProfile {
   country: string; // Fixed to "FR"
   department: string;
   interests: string[];
+  // Avatar customization
+  avatarHair?: string; // e.g., 'ShortHairShortFlat', 'LongHairStraight'
+  avatarHairColor?: string; // e.g., 'black', 'brown', 'blonde'
+  avatarEyes?: string; // e.g., 'Default', 'Happy', 'Wink'
+  avatarEyeColor?: string; // e.g., 'Brown', 'Blue', 'Green'
+  avatarAccessories?: string; // e.g., 'Blank', 'Prescription01', 'Sunglasses'
+  avatarSkin?: string; // e.g., 'Light', 'Tanned', 'Brown'
+  // Real profile photo (after IRL meeting)
+  realPhotoUrl?: string;
+  realName?: string;
 }
 
 // Users can have multiple search profiles
@@ -52,6 +62,13 @@ export interface Message {
   senderId: string; // 'user' or matchId
   text: string;
   timestamp: number;
+  attachment?: {
+    id: string;
+    type: 'image' | 'video' | 'audio' | 'pdf' | 'other';
+    fileName: string;
+    mimeType: string;
+    size: number;
+  };
 }
 
 export interface ChatSession {
